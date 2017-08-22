@@ -1,7 +1,9 @@
 package persist;
 import java.awt.EventQueue;
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -110,8 +112,9 @@ public class EstacaoMetereologicaUI {
 		frame.getContentPane().add(panel_1);
 	}
 	
-	private LocalDate getData() {
-		return LocalDate.parse(txData.getText(), formatter);
+	private Date getData() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+		return formatter.parse(txData.getText());
 	}
 	
 	private DirecaoVento getDirecaoVento() {
@@ -132,7 +135,11 @@ public class EstacaoMetereologicaUI {
 	
 	public ClimaDoDia getLeitura() {
 		leitura = new ClimaDoDia();
-		leitura.setData(getData());
+		try {
+			leitura.setData(getData());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		leitura.setDirecaoVento(getDirecaoVento());
 		leitura.setIndicePluviometrico(getIndicePluviometrico());
 		leitura.setTemperatura(getTemperatura());

@@ -1,20 +1,20 @@
 package persist;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 public class ClimaDoDia implements Serializable {
 
-	private LocalDate data;
+	private Date data;
 	private DirecaoVento direcaoVento;
 	private int velocidadeVento;
 	private int indicePluviometrico;
 	private double temperatura;
 
-	public LocalDate getData() {
+	public Date getData() {
 		return data;
 	}
 
-	public void setData(LocalDate data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 
