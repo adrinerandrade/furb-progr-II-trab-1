@@ -1,15 +1,43 @@
 package persist;
 
 import java.awt.EventQueue;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EstacaoMetereologicaUI {
 
 	private JFrame frame;
+	private JTextField txtArquivo;
+	private JTextField txtArquivoMensal;
+	private File arquivoBinario;
+	private File arquivoMensal;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -25,24 +53,121 @@ public class EstacaoMetereologicaUI {
 	}
 
 	public EstacaoMetereologicaUI() {
-		JFileChooser jfc = new JFileChooser();
-		int returnVal = jfc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = jfc.getSelectedFile();
-		}
+
 		initialize();
 	}
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 832, 536);
+		frame.setBounds(100, 100, 473, 327);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 398, 475);
+		panel.setBorder(
+				new TitledBorder(null, "Arquivo Bin\u00E1rio", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(10, 11, 437, 79);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
-	}
 
+		txtArquivo = new JTextField();
+		txtArquivo.setBounds(10, 22, 281, 20);
+		panel.add(txtArquivo);
+		txtArquivo.setColumns(10);
+
+		JButton btnSelecionarArquivo = new JButton("Selecionar");
+		btnSelecionarArquivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser jfc = new JFileChooser();
+				int valor = jfc.showOpenDialog(null);
+				if (valor == JFileChooser.APPROVE_OPTION) {
+					txtArquivo.setText(jfc.getSelectedFile().getAbsolutePath());
+				}
+			}
+		});
+		btnSelecionarArquivo.setBounds(301, 21, 126, 23);
+		panel.add(btnSelecionarArquivo);
+
+		JButton btnNewButton = new JButton("Gerar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Path pathArq = Paths.get(txtArquivo.getText());
+				PersistenciaMes.persistirMes(new LeitorDadosMetereologicos(txtArquivo.getText()).leia(),  pathArq.toFile().getParent().toString());
+			}
+		});
+		btnNewButton.setBounds(301, 45, 126, 23);
+		panel.add(btnNewButton);
+
+		JLabel lblArquivosMensair = new JLabel("Arquivos Mensais");
+		lblArquivosMensair.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblArquivosMensair.setBounds(196, 49, 95, 14);
+		panel.add(lblArquivosMensair);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(
+				new TitledBorder(null, "Relat\u00F3rios", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(10, 101, 437, 176);
+		frame.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
+
+		txtArquivoMensal = new JTextField();
+		txtArquivoMensal.setBounds(10, 22, 280, 20);
+		panel_1.add(txtArquivoMensal);
+		txtArquivoMensal.setColumns(10);
+
+		JButton btnSelecionarArquivoMensal = new JButton("Selecionar");
+		btnSelecionarArquivoMensal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jfc = new JFileChooser();
+				int valor = jfc.showOpenDialog(null);
+				if (valor == JFileChooser.APPROVE_OPTION) {
+					txtArquivoMensal.setText(jfc.getSelectedFile().getAbsolutePath());
+				}
+			}
+		});
+		btnSelecionarArquivoMensal.setBounds(300, 21, 127, 23);
+		panel_1.add(btnSelecionarArquivoMensal);
+
+		JButton btnArquivoTexto = new JButton("Gerar");
+		btnArquivoTexto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Path pathArq = Paths.get(txtArquivoMensal.getText());
+				RelatorioTexto.gerarRelatorio(getObjetos(pathArq.toFile()),  pathArq.toFile().getParent().toString());
+			}
+		});
+		btnArquivoTexto.setBounds(300, 52, 127, 23);
+		panel_1.add(btnArquivoTexto);
+
+		JLabel lblArquivoTexto = new JLabel("Arquivo Texto");
+		lblArquivoTexto.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblArquivoTexto.setBounds(198, 56, 92, 14);
+		panel_1.add(lblArquivoTexto);
+
+		JLabel lblNewLabel = new JLabel("Em tela");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblNewLabel.setBounds(244, 81, 46, 14);
+		panel_1.add(lblNewLabel);
+
+		JButton btnGerar = new JButton("Gerar");
+		btnGerar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Path pathArq = Paths.get(txtArquivoMensal.getText());
+				RelatorioUI rel = new RelatorioUI(getObjetos(pathArq.toFile()));
+			}
+		});
+		btnGerar.setBounds(300, 77, 127, 23);
+		panel_1.add(btnGerar);
+	}
+	
+    public List<ClimaDoDia> getObjetos(File file) {
+    	ArrayList<ClimaDoDia> listaClimaDoDia = null;
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            listaClimaDoDia = (ArrayList<ClimaDoDia>)ois.readObject();
+            ois.close();
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+        return listaClimaDoDia;
+    }
 }

@@ -15,26 +15,7 @@ public class RelatorioUI extends JFrame {
 	private JPanel contentPane;
 	JTextArea textArea;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RelatorioUI frame = new RelatorioUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public RelatorioUI() {
+	public RelatorioUI(List<ClimaDoDia> lista) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 537, 406);
 		contentPane = new JPanel();
@@ -47,10 +28,11 @@ public class RelatorioUI extends JFrame {
 		textArea.setEditable(false);
 		textArea.setBounds(10, 11, 501, 345);
 		contentPane.add(textArea);
+		this.setVisible(true);
+		gerarRelatorio(lista);
 	}
 	
 	public void gerarRelatorio(List<ClimaDoDia> lista) {
-		int i = 0;
 		int acumuladoChuva = 0;
 		int totalVelocidadeVento = 0;
 		
@@ -69,44 +51,44 @@ public class RelatorioUI extends JFrame {
 		double menorTemperatura = 0;
 		Date dataMenorTemperatura = new Date();
 		
-		for(; i < lista.size(); i++) {
-			acumuladoChuva += lista.get(i).getIndicePluviometrico();
-			totalVelocidadeVento += lista.get(i).getVelocidadeVento();
-			totalTemperatura += lista.get(i).getTemperatura();
+		for(ClimaDoDia leitura: lista) {
+			acumuladoChuva += leitura.getIndicePluviometrico();
+			totalVelocidadeVento += leitura.getVelocidadeVento();
+			totalTemperatura += leitura.getTemperatura();
 			
-			if(lista.get(i).getVelocidadeVento() > maiorVelocidadeVento) {
-				maiorVelocidadeVento = lista.get(i).getVelocidadeVento();
-				dataMaiorVelocidadeVento = lista.get(i).getData();
-				direcaoMaiorVelocidadeVento = lista.get(i).getDirecaoVento();
-			} else if (lista.get(i).getVelocidadeVento() < menorVelocidadeVento  || menorVelocidadeVento == 0) {
-				menorVelocidadeVento = lista.get(i).getVelocidadeVento();
-				dataMenorVelocidadeVento = lista.get(i).getData();
-				direcaoMenorVelocidadeVento = lista.get(i).getDirecaoVento();
+			if(leitura.getVelocidadeVento() > maiorVelocidadeVento) {
+				maiorVelocidadeVento = leitura.getVelocidadeVento();
+				dataMaiorVelocidadeVento = leitura.getData();
+				direcaoMaiorVelocidadeVento = leitura.getDirecaoVento();
+			} else if (leitura.getVelocidadeVento() < menorVelocidadeVento  || menorVelocidadeVento == 0) {
+				menorVelocidadeVento = leitura.getVelocidadeVento();
+				dataMenorVelocidadeVento = leitura.getData();
+				direcaoMenorVelocidadeVento = leitura.getDirecaoVento();
 			}
 			
-			if(lista.get(i).getTemperatura() > maiorTemperatura) {
-				maiorTemperatura = lista.get(i).getTemperatura();
-				dataMaiorTemperatura = lista.get(i).getData();
-			} else if (lista.get(i).getTemperatura() < menorTemperatura  || menorTemperatura == 0) {
-				menorTemperatura = lista.get(i).getTemperatura(); 
-				dataMenorTemperatura = lista.get(i).getData();
+			if(leitura.getTemperatura() > maiorTemperatura) {
+				maiorTemperatura = leitura.getTemperatura();
+				dataMaiorTemperatura = leitura.getData();
+			} else if (leitura.getTemperatura() < menorTemperatura  || menorTemperatura == 0) {
+				menorTemperatura = leitura.getTemperatura(); 
+				dataMenorTemperatura = leitura.getData();
 			}			
 		}
 		
-		textArea.append("Mês: " + new SimpleDateFormat("MMMM/YYYY").format(lista.get(0).getData()));
+		textArea.append("Mês: " + new SimpleDateFormat("MMMM/yyyy").format(lista.get(0).getData()));
 		textArea.append("/n");
 		textArea.append("Acumulado de Chuva: " + acumuladoChuva);
 		textArea.append("/n");
 		textArea.append("Velocidade média do Vento:" + totalVelocidadeVento / lista.size());
 		textArea.append("/n");
-		textArea.append("Maior velocidade do Vento:" + maiorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/YYYY").format(dataMaiorVelocidadeVento) + " na direção: " + direcaoMaiorVelocidadeVento);
+		textArea.append("Maior velocidade do Vento:" + maiorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorVelocidadeVento) + " na direção: " + direcaoMaiorVelocidadeVento);
 		textArea.append("/n");
-		textArea.append("Menor velocidade do Vento:" + menorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/YYYY").format(dataMenorVelocidadeVento) + " na direção: " + direcaoMenorVelocidadeVento);
+		textArea.append("Menor velocidade do Vento:" + menorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorVelocidadeVento) + " na direção: " + direcaoMenorVelocidadeVento);
 		textArea.append("/n");
 		textArea.append("Temperatura média: " + totalTemperatura / lista.size());
 		textArea.append("/n");
-		textArea.append("Maior Temperatura: " + maiorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/YYYY").format(dataMaiorTemperatura));
+		textArea.append("Maior Temperatura: " + maiorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorTemperatura));
 		textArea.append("/n");
-		textArea.append("Menor Temperatura: " + menorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/YYYY").format(dataMenorTemperatura));
+		textArea.append("Menor Temperatura: " + menorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorTemperatura));
 	}
 }
