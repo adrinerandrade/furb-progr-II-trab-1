@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -138,10 +139,16 @@ public class EstacaoMetereologicaUI {
 			public void actionPerformed(ActionEvent e) {
 				if(rdbtnArquivoTexto.isSelected()) {
 					Path pathArq = Paths.get(txtArquivoMensal.getText());
-					RelatorioTexto.gerarRelatorio(getObjetos(pathArq.toFile()),  pathArq.toFile().getParent().toString());
+					List<ClimaDoDia> lista = getObjetos(pathArq.toFile());
+					if(lista != null && !lista.isEmpty()) {
+						RelatorioTexto.gerarRelatorio(lista,  pathArq.toFile().getParent().toString());
+					}
 				} else if (rdbtnEmTela.isSelected()) {
 					Path pathArq = Paths.get(txtArquivoMensal.getText());
-					RelatorioUI rel = new RelatorioUI(getObjetos(pathArq.toFile()));
+					List<ClimaDoDia> lista = getObjetos(pathArq.toFile());
+					if(lista != null && !lista.isEmpty()) {
+						RelatorioUI rel = new RelatorioUI(lista);
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Selecione um tipo de relatório!");
 				}
@@ -171,11 +178,13 @@ public class EstacaoMetereologicaUI {
 	
     public List<ClimaDoDia> getObjetos(File file) {
     	ArrayList<ClimaDoDia> listaClimaDoDia = null;
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             listaClimaDoDia = (ArrayList<ClimaDoDia>)ois.readObject();
-            ois.close();
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+        	JOptionPane.showMessageDialog(null, "O arquivo " + file.getName() + " não foi encontrado!");
+		} catch (StreamCorruptedException e) {
+			JOptionPane.showMessageDialog(null, "O arquivo " + file.getName() + " não está no formato correto!");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
         return listaClimaDoDia;
