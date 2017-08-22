@@ -1,3 +1,4 @@
+package persist;
 import java.awt.EventQueue;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +19,7 @@ public class EstacaoMetereologicaUI {
 	private JTextField txTemperatura;
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private JComboBox cbDirecaoVento;
-	private Leitura leitura;
+	private ClimaDoDia leitura;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -129,8 +130,8 @@ public class EstacaoMetereologicaUI {
 		return Double.parseDouble(txTemperatura.getText());
 	}
 	
-	public Leitura getLeitura() {
-		leitura = new Leitura();
+	public ClimaDoDia getLeitura() {
+		leitura = new ClimaDoDia();
 		leitura.setData(getData());
 		leitura.setDirecaoVento(getDirecaoVento());
 		leitura.setIndicePluviometrico(getIndicePluviometrico());
