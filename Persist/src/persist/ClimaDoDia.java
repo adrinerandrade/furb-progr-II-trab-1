@@ -5,8 +5,8 @@ import java.util.Date;
 public class ClimaDoDia implements Serializable {
 
 	private Date data;
-	private DirecaoVento direcaoVento;
-	private int velocidadeVento;
+	private String ventoDirecao;
+	private int ventoVelocidade;
 	private int indicePluviometrico;
 	private double temperatura;
 
@@ -18,20 +18,20 @@ public class ClimaDoDia implements Serializable {
 		this.data = data;
 	}
 
-	public DirecaoVento getDirecaoVento() {
-		return direcaoVento;
+	public String getDirecaoVento() {
+		return ventoDirecao;
 	}
 
-	public void setDirecaoVento(DirecaoVento direcaoVento) {
-		this.direcaoVento = direcaoVento;
+	public void setDirecaoVento(String direcaoVento) {
+		this.ventoDirecao = direcaoVento;
 	}
 
 	public int getVelocidadeVento() {
-		return velocidadeVento;
+		return ventoVelocidade;
 	}
 
 	public void setVelocidadeVento(int velocidadeVento) {
-		this.velocidadeVento = velocidadeVento;
+		this.ventoVelocidade = velocidadeVento;
 	}
 
 	public int getIndicePluviometrico() {
