@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class PersistenciaMes {
 	public static void persistirMes(List<DadosMensal> dados, String path) {
 		for(DadosMensal dado: dados) {
@@ -17,6 +19,7 @@ public class PersistenciaMes {
 				file = new ObjectOutputStream(new FileOutputStream(pathArq.toFile()));
 				file.writeObject(dado.getDias());
 				file.close();
+				JOptionPane.showMessageDialog(null, "Os arquivos foram gerados no diretório: " + path);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
