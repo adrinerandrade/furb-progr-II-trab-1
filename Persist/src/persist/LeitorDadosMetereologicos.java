@@ -32,6 +32,7 @@ public class LeitorDadosMetereologicos {
 				try {
 					ClimaDoDia climaDoDia = criarClimaDoDia(stream, formatter, lastDate);
 					builder.novoClimaDoDia(climaDoDia);
+					lastDate = climaDoDia.getData();
 				} catch (EOFException e) {
 					eof = true;
 				}
@@ -57,8 +58,7 @@ public class LeitorDadosMetereologicos {
 				throw new RuntimeException(String.format("Dia %s foi encontrado antes de %d.", lastDate, date));
 			}
 		}
-		lastDate = date;
-
+		
 		ClimaDoDia climaDoDia = new ClimaDoDia();
 		climaDoDia.setData(date);
 		char pD = stream.readChar();
