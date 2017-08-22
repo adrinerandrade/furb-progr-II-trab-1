@@ -25,11 +25,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.JTextField;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
 
 public class EstacaoMetereologicaUI {
 
@@ -38,6 +41,8 @@ public class EstacaoMetereologicaUI {
 	private JTextField txtArquivoMensal;
 	private File arquivoBinario;
 	private File arquivoMensal;
+	private JRadioButton rdbtnArquivoTexto;
+	private JRadioButton rdbtnEmTela;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -100,7 +105,7 @@ public class EstacaoMetereologicaUI {
 
 		JLabel lblArquivosMensair = new JLabel("Arquivos Mensais");
 		lblArquivosMensair.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblArquivosMensair.setBounds(196, 49, 95, 14);
+		lblArquivosMensair.setBounds(98, 49, 193, 14);
 		panel.add(lblArquivosMensair);
 
 		JPanel panel_1 = new JPanel();
@@ -131,32 +136,37 @@ public class EstacaoMetereologicaUI {
 		JButton btnArquivoTexto = new JButton("Gerar");
 		btnArquivoTexto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Path pathArq = Paths.get(txtArquivoMensal.getText());
-				RelatorioTexto.gerarRelatorio(getObjetos(pathArq.toFile()),  pathArq.toFile().getParent().toString());
+				if(rdbtnArquivoTexto.isSelected()) {
+					Path pathArq = Paths.get(txtArquivoMensal.getText());
+					RelatorioTexto.gerarRelatorio(getObjetos(pathArq.toFile()),  pathArq.toFile().getParent().toString());
+				} else if (rdbtnEmTela.isSelected()) {
+					Path pathArq = Paths.get(txtArquivoMensal.getText());
+					RelatorioUI rel = new RelatorioUI(getObjetos(pathArq.toFile()));
+				} else {
+					JOptionPane.showMessageDialog(null, "Selecione um tipo de relatório!");
+				}
 			}
 		});
 		btnArquivoTexto.setBounds(300, 52, 127, 23);
 		panel_1.add(btnArquivoTexto);
-
-		JLabel lblArquivoTexto = new JLabel("Arquivo Texto");
-		lblArquivoTexto.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblArquivoTexto.setBounds(198, 56, 92, 14);
-		panel_1.add(lblArquivoTexto);
-
-		JLabel lblNewLabel = new JLabel("Em tela");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel.setBounds(244, 81, 46, 14);
-		panel_1.add(lblNewLabel);
-
-		JButton btnGerar = new JButton("Gerar");
-		btnGerar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Path pathArq = Paths.get(txtArquivoMensal.getText());
-				RelatorioUI rel = new RelatorioUI(getObjetos(pathArq.toFile()));
-			}
-		});
-		btnGerar.setBounds(300, 77, 127, 23);
-		panel_1.add(btnGerar);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Tipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_2.setBounds(10, 53, 280, 53);
+		panel_1.add(panel_2);
+		panel_2.setLayout(null);
+		
+		ButtonGroup bg = new ButtonGroup();
+		
+		rdbtnArquivoTexto = new JRadioButton("Arquivo Texto");
+		rdbtnArquivoTexto.setBounds(6, 21, 138, 23);
+		panel_2.add(rdbtnArquivoTexto);
+		bg.add(rdbtnArquivoTexto);
+		
+		rdbtnEmTela = new JRadioButton("Em Tela");
+		rdbtnEmTela.setBounds(157, 21, 117, 23);
+		panel_2.add(rdbtnEmTela);
+		bg.add(rdbtnEmTela);
 	}
 	
     public List<ClimaDoDia> getObjetos(File file) {

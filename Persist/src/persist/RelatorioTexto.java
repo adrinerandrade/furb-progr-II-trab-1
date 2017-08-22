@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class RelatorioTexto {
 	public static void gerarRelatorio(List<ClimaDoDia> lista, String path) {
 		int acumuladoChuva = 0;
@@ -67,12 +69,13 @@ public class RelatorioTexto {
 			saida.newLine();
 			saida.write("Menor velocidade do Vento:" + menorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorVelocidadeVento) + " na direção: " + direcaoMenorVelocidadeVento);
 			saida.newLine();
-			saida.write("Temperatura média: " + totalTemperatura / lista.size());
+			saida.write("Temperatura média: " + String.format("%.2f",totalTemperatura / lista.size()) + "°C");
 			saida.newLine();
-			saida.write("Maior Temperatura: " + maiorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorTemperatura));
+			saida.write("Maior Temperatura: " +String.format("%.2f", maiorTemperatura) + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorTemperatura));
 			saida.newLine();
-			saida.write("Menor Temperatura: " + menorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorTemperatura));
+			saida.write("Menor Temperatura: " + String.format("%.2f",menorTemperatura) + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorTemperatura));
 			saida.close();
+			JOptionPane.showMessageDialog(null, "O relatório foi gerado no diretório: " + path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

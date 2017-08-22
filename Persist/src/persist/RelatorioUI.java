@@ -24,7 +24,6 @@ public class RelatorioUI extends JFrame {
 		contentPane.setLayout(null);
 		
 		textArea = new JTextArea();
-		textArea.setEnabled(false);
 		textArea.setEditable(false);
 		textArea.setBounds(10, 11, 501, 345);
 		contentPane.add(textArea);
@@ -76,19 +75,21 @@ public class RelatorioUI extends JFrame {
 		}
 		
 		textArea.append("Mês: " + new SimpleDateFormat("MMMM/yyyy").format(lista.get(0).getData()));
-		textArea.append("/n");
-		textArea.append("Acumulado de Chuva: " + acumuladoChuva);
-		textArea.append("/n");
-		textArea.append("Velocidade média do Vento:" + totalVelocidadeVento / lista.size());
-		textArea.append("/n");
+		textArea.append("\n");
+		textArea.append("Quantidade de dias considerados: " + lista.size());
+		textArea.append("\n");
+		textArea.append("Acumulado de Chuva: " + acumuladoChuva + " mm");
+		textArea.append("\n");
+		textArea.append("Velocidade média do Vento:" + totalVelocidadeVento / lista.size() + "km/h");
+		textArea.append("\n");
 		textArea.append("Maior velocidade do Vento:" + maiorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorVelocidadeVento) + " na direção: " + direcaoMaiorVelocidadeVento);
-		textArea.append("/n");
+		textArea.append("\n");
 		textArea.append("Menor velocidade do Vento:" + menorVelocidadeVento + "km/h em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorVelocidadeVento) + " na direção: " + direcaoMenorVelocidadeVento);
-		textArea.append("/n");
-		textArea.append("Temperatura média: " + totalTemperatura / lista.size());
-		textArea.append("/n");
-		textArea.append("Maior Temperatura: " + maiorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorTemperatura));
-		textArea.append("/n");
-		textArea.append("Menor Temperatura: " + menorTemperatura + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorTemperatura));
+		textArea.append("\n");
+		textArea.append("Temperatura média: " + String.format("%.2f", totalTemperatura / lista.size()) + "°C");
+		textArea.append("\n");
+		textArea.append("Maior Temperatura: " + String.format("%.2f",maiorTemperatura) + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMaiorTemperatura));
+		textArea.append("\n");
+		textArea.append("Menor Temperatura: " + String.format("%.2f",menorTemperatura) + "°C em " + new SimpleDateFormat("dd/MM/yyyy").format(dataMenorTemperatura));
 	}
 }
