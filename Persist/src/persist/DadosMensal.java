@@ -1,12 +1,13 @@
 package persist;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class DadosMensal {
 	
 	private Date mes;
-	private List<ClimaDoDia> dias;
+	private List<ClimaDoDia> dias = new ArrayList<>();
 	
 	public Date getMes() {
 		return mes;
@@ -20,8 +21,8 @@ public class DadosMensal {
 		return dias;
 	}
 	
-	public void setDias(List<ClimaDoDia> dias) {
-		this.dias = dias;
+	public void addClimaDoDia(ClimaDoDia clima) {
+		this.dias.add(clima);
 	}
 
 }

@@ -23,13 +23,15 @@ public class LeitorDadosMetereologicos {
 	}
 
 	public List<DadosMensal> leia() {
+		DadosMensalBuilder builder = new DadosMensalBuilder();
 		try (DataInputStream stream = new DataInputStream(new FileInputStream(this.file))) {
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date lastDate = null;
 			boolean eof = false;
 			while (!eof) {
 				try {
-					criarClimaDoDia(stream, formatter, lastDate);
+					ClimaDoDia climaDoDia = criarClimaDoDia(stream, formatter, lastDate);
+					builder.novoClimaDoDia(climaDoDia);
 				} catch (EOFException e) {
 					eof = true;
 				}
@@ -37,7 +39,7 @@ public class LeitorDadosMetereologicos {
 		} catch (IOException e) {
 			throw new RuntimeException("Erro ao tentar ler o arquivo.", e);
 		}
-		return null;
+		return builder.build();
 	}
 
 	private ClimaDoDia criarClimaDoDia(DataInputStream stream, SimpleDateFormat formatter, Date lastDate) throws IOException {
