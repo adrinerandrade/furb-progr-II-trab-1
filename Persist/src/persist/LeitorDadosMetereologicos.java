@@ -22,7 +22,7 @@ public class LeitorDadosMetereologicos {
 		}
 	}
 
-	public List<DadosMensal> leia() {
+	public List<DadosMensal> leia() throws ClimaDoDiaLeituraException {
 		DadosMensalBuilder builder = new DadosMensalBuilder();
 		try (DataInputStream stream = new DataInputStream(new FileInputStream(this.file))) {
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -43,19 +43,19 @@ public class LeitorDadosMetereologicos {
 		return builder.build();
 	}
 
-	private ClimaDoDia criarClimaDoDia(DataInputStream stream, SimpleDateFormat formatter, Date lastDate) throws IOException {
+	private ClimaDoDia criarClimaDoDia(DataInputStream stream, SimpleDateFormat formatter, Date lastDate) throws IOException, ClimaDoDiaLeituraException {
 		Date date;
 		try {
 			date = formatter.parse(stream.readUTF());
 		} catch (ParseException e) {
-			throw new RuntimeException("Erro ao tentar ler formato da data.", e);
+			throw new ClimaDoDiaLeituraException("Erro ao tentar ler formato da data.", e);
 		}
 		if (lastDate != null) {
 			if (date.equals(lastDate)) {
-				throw new RuntimeException(String.format("Dia %s está repetido.", date));
+				throw new ClimaDoDiaLeituraException(String.format("Dia %s está repetido.", formatter.format(date)));
 			}
 			if (date.before(lastDate)) {
-				throw new RuntimeException(String.format("Dia %s foi encontrado antes de %d.", lastDate, date));
+				throw new ClimaDoDiaLeituraException(String.format("Dia %s foi encontrado antes de %d.", formatter.format(lastDate), formatter.format(date)));
 			}
 		}
 		

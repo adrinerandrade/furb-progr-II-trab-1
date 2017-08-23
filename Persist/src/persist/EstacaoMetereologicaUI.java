@@ -1,47 +1,35 @@
 package persist;
 
 import java.awt.EventQueue;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.EOFException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.JTextField;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 public class EstacaoMetereologicaUI {
 
 	private JFrame frame;
 	private JTextField txtArquivo;
 	private JTextField txtArquivoMensal;
-	private File arquivoBinario;
-	private File arquivoMensal;
 	private JRadioButton rdbtnArquivoTexto;
 	private JRadioButton rdbtnEmTela;
 
@@ -98,7 +86,13 @@ public class EstacaoMetereologicaUI {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Path pathArq = Paths.get(txtArquivo.getText());
-				PersistenciaMes.persistirMes(new LeitorDadosMetereologicos(txtArquivo.getText()).leia(),  pathArq.toFile().getParent().toString());
+				List<DadosMensal> dados;
+				try {
+					dados = new LeitorDadosMetereologicos(txtArquivo.getText()).leia();
+					PersistenciaMes.persistirMes(dados,  pathArq.toFile().getParent().toString());
+				} catch (ClimaDoDiaLeituraException e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
 			}
 		});
 		btnNewButton.setBounds(301, 45, 126, 23);
@@ -147,7 +141,7 @@ public class EstacaoMetereologicaUI {
 					Path pathArq = Paths.get(txtArquivoMensal.getText());
 					List<ClimaDoDia> lista = getObjetos(pathArq.toFile());
 					if(lista != null && !lista.isEmpty()) {
-						RelatorioUI rel = new RelatorioUI(lista);
+						new RelatorioUI(lista);
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Selecione um tipo de relatório!");
@@ -176,10 +170,11 @@ public class EstacaoMetereologicaUI {
 		bg.add(rdbtnEmTela);
 	}
 	
-    public List<ClimaDoDia> getObjetos(File file) {
+    @SuppressWarnings("unchecked")
+	public List<ClimaDoDia> getObjetos(File file) {
     	ArrayList<ClimaDoDia> listaClimaDoDia = null;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            listaClimaDoDia = (ArrayList<ClimaDoDia>)ois.readObject();
+            listaClimaDoDia = (ArrayList<ClimaDoDia>) ois.readObject();
         } catch (FileNotFoundException e) {
         	JOptionPane.showMessageDialog(null, "O arquivo " + file.getName() + " não foi encontrado!");
 		} catch (StreamCorruptedException e) {
